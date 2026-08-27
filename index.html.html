@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Endocrinology Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6F3; --paper:#FFFFFF; --ink:#141A1B; --ink-soft:#54605F; --ink-faint:#8A938E; --line:#DBDFD8;
+    --teal:#0E6C6B; --teal-dark:#0A4F4F; --teal-tint:#E4EFEE;
+    --amber:#A6721E; --amber-tint:#F6EBD8;
+    --coral:#B23A2E; --coral-tint:#F5E1DD;
+    --plum:#6B4C7A; --plum-tint:#EDE5F0;
+    --slate:#5B6470; --slate-tint:#EAECEA;
+    --sans:'Inter',system-ui,-apple-system,sans-serif; --serif:'Newsreader',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+  .app{max-width:1040px;margin:0 auto;padding:28px 20px 60px;}
+  .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+  .masthead .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-dark);margin:0 0 6px;}
+  .masthead h1{font-family:var(--serif);font-weight:600;font-size:clamp(22px,4vw,30px);margin:0;line-height:1.15;}
+  .masthead .rule-note{font-size:12.5px;color:var(--ink-soft);text-align:right;max-width:280px;line-height:1.5;}
+
+  .about-box{margin-bottom:20px;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:3px;padding:18px 20px;}
+  .about-box .oss-tag{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px;background:var(--teal-tint);color:var(--teal-dark);margin-bottom:10px;}
+  .about-box p{margin:0 0 8px;font-size:13px;line-height:1.65;color:var(--ink-soft);}
+  .about-box p:last-child{margin-bottom:0;}
+  .about-box strong{color:var(--ink);}
+
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:24px;}
+  .card h2{font-family:var(--serif);font-size:18px;font-weight:600;margin:0 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
+  .field{margin-bottom:16px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .age-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  input[type=number], select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:3px;font-family:var(--mono);font-size:14.5px;color:var(--ink);background:#FCFDFC;}
+  select{font-family:var(--sans);font-size:14px;}
+  input[type=number]:focus, select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-tint);}
+  .unit{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-left:4px;}
+  .hint{font-size:11.5px;color:var(--ink-faint);margin-top:4px;line-height:1.5;}
+
+  .toggle-row{display:flex;gap:8px;}
+  .toggle-row button{flex:1;padding:10px;border:1px solid var(--line);background:#FCFDFC;border-radius:3px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--ink-soft);cursor:pointer;}
+  .toggle-row button.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+
+  .checkbox-row{display:flex;flex-wrap:wrap;gap:14px;padding:4px 0;}
+  .checkbox-item{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink);}
+  .checkbox-item input{width:16px;height:16px;}
+
+  .compute-btn{width:100%;padding:13px;margin-top:6px;background:var(--ink);color:#fff;border:none;border-radius:3px;font-family:var(--sans);font-weight:600;font-size:14.5px;letter-spacing:.01em;cursor:pointer;}
+  .compute-btn:hover{background:var(--teal-dark);}
+
+  .back-btn{display:inline-flex;align-items:center;gap:7px;background:var(--coral);border:1px solid var(--coral);border-radius:3px;padding:9px 16px;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.01em;color:#FFFFFF;cursor:pointer;margin-bottom:18px;box-shadow:0 1px 2px rgba(178,58,46,0.25);}
+  .back-btn:hover{background:#96302599;background:#963025;border-color:#963025;}
+
+  /* Menu */
+  .menu-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media(min-width:700px){.menu-grid{grid-template-columns:1fr 1fr 1fr;}}
+  .menu-card{background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:26px 22px;cursor:pointer;transition:border-color .15s;text-align:left;}
+  .menu-card:hover{border-color:var(--teal);}
+  .menu-card .num{font-family:var(--mono);font-size:11px;color:var(--teal-dark);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+  .menu-card h3{font-family:var(--serif);font-size:19px;font-weight:600;margin:0 0 8px;}
+  .menu-card p{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:0;}
+
+  /* Results */
+  .results-wrap{margin-top:22px;display:grid;grid-template-columns:1fr;gap:16px;}
+  @media(min-width:760px){.results-wrap.cols-3{grid-template-columns:1fr 1fr 1fr;}}
+  .result-card{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:20px;display:flex;flex-direction:column;}
+  .result-card .tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;padding:3px 7px;border-radius:2px;margin-bottom:10px;align-self:flex-start;}
+  .tag.ts{background:var(--plum-tint);color:var(--plum);}
+  .tag.lyon{background:var(--amber-tint);color:var(--amber);}
+  .tag.iap{background:var(--teal-tint);color:var(--teal-dark);}
+  .result-card h3{font-family:var(--serif);font-size:15.5px;font-weight:600;margin:0 0 12px;line-height:1.3;}
+  .metric-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-top:1px solid var(--line);}
+  .metric-row:first-of-type{border-top:none;}
+  .metric-label{font-size:12px;color:var(--ink-soft);}
+  .metric-value{font-family:var(--mono);font-size:16px;font-weight:600;}
+  .na-note{font-size:12px;color:var(--ink-faint);line-height:1.55;padding:10px 0;}
+  .caveat{margin-top:10px;padding:8px 10px;background:var(--amber-tint);border-left:3px solid var(--amber);font-size:11px;line-height:1.55;color:#5C4319;border-radius:2px;}
+  .empty-state{display:flex;align-items:center;justify-content:center;min-height:160px;color:var(--ink-faint);font-size:13.5px;text-align:center;padding:30px 20px;line-height:1.6;grid-column:1/-1;border:1px dashed var(--line);border-radius:3px;background:var(--paper);}
+
+  /* Dilatation-specific */
+  .banner{display:flex;gap:10px;align-items:center;padding:12px 16px;border-radius:3px;margin-bottom:18px;font-size:13.5px;font-weight:600;}
+  .banner.dilated{background:var(--coral-tint);color:var(--coral);border-left:4px solid var(--coral);}
+  .banner.normal{background:var(--teal-tint);color:var(--teal-dark);border-left:4px solid var(--teal);}
+  .banner .sub{font-weight:400;font-size:11.5px;display:block;margin-top:2px;}
+
+  .risk-card{background:var(--paper);border:1px solid var(--line);border-radius:3px;padding:22px;margin-top:16px;}
+  .risk-tier{display:inline-block;font-family:var(--serif);font-size:20px;font-weight:600;padding:6px 14px;border-radius:3px;margin-bottom:6px;}
+  .risk-tier.low{background:var(--teal-tint);color:var(--teal-dark);}
+  .risk-tier.moderate{background:var(--amber-tint);color:var(--amber);}
+  .risk-tier.moderate-high{background:#F3DCC9;color:#8A4B12;}
+  .risk-tier.high{background:var(--coral-tint);color:var(--coral);}
+  .interval{font-size:14px;color:var(--ink-soft);margin:6px 0 0;}
+  .surgery-flag{margin-top:16px;padding:12px 14px;background:var(--coral-tint);border-left:4px solid var(--coral);border-radius:2px;font-size:12.5px;line-height:1.6;color:#6B241C;}
+  .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+  @media(max-width:600px){.metrics-grid{grid-template-columns:1fr;}}
+  .metric-box{background:#FBFBFA;border:1px solid var(--line);border-radius:3px;padding:14px;text-align:center;}
+  .metric-box .mlabel{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);margin-bottom:6px;}
+  .metric-box .mval{font-family:var(--serif);font-size:24px;font-weight:600;}
+
+  /* Indices tool */
+  .branch-banner{display:flex;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:3px;padding:10px 14px;margin-bottom:20px;font-size:12.5px;color:var(--ink-soft);}
+  .branch-banner strong{color:var(--ink);font-family:var(--mono);font-size:12px;}
+  .grid2{display:grid;grid-template-columns:1fr;gap:20px;}
+  @media(min-width:780px){.grid2{grid-template-columns:1fr 1fr;align-items:start;}}
+  .formula-tag{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;border-radius:2px;background:var(--teal-tint);color:var(--teal-dark);margin-bottom:6px;}
+  .site-name{font-family:var(--serif);font-size:16px;font-weight:600;margin:2px 0 14px;color:var(--ink);}
+  .z-display{display:flex;align-items:baseline;gap:10px;margin-bottom:6px;}
+  .z-display .z-value{font-family:var(--serif);font-size:50px;font-weight:600;line-height:1;}
+  .z-display .z-label{font-family:var(--mono);font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;}
+  .verdict{font-size:13.5px;font-weight:600;margin-bottom:18px;padding:8px 12px;border-radius:3px;display:inline-block;}
+  .verdict.normal{background:var(--teal-tint);color:var(--teal-dark);}
+  .verdict.dilated{background:var(--coral-tint);color:var(--coral);}
+  .detail-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px;}
+  .detail-table tr{border-top:1px solid var(--line);}
+  .detail-table tr:first-child{border-top:none;}
+  .detail-table td{padding:8px 0;}
+  .detail-table td:first-child{color:var(--ink-soft);}
+  .detail-table td:last-child{text-align:right;font-family:var(--mono);font-weight:500;}
+  .warn-box{margin-top:16px;padding:10px 12px;background:var(--amber-tint);border-left:3px solid var(--amber);font-size:12.5px;line-height:1.55;color:#5C4319;border-radius:2px;}
+  .err-box{margin-top:16px;padding:10px 12px;background:var(--coral-tint);border-left:3px solid var(--coral);font-size:12.5px;line-height:1.55;color:#6B241C;border-radius:2px;}
+  .result-card.empty{display:flex;align-items:center;justify-content:center;min-height:320px;color:var(--ink-faint);font-size:13.5px;text-align:center;padding:40px 24px;line-height:1.6;}
+
+  footer.citation{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint);line-height:1.7;}
+  footer.citation strong{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="masthead">
+    <div>
+      <p class="eyebrow">Turner syndrome · Clinical toolkit</p>
+      <h1>Clinical Endocrinology Toolkit</h1>
+    </div>
+    <p class="rule-note">Height centiles &amp; SDS, aortic dilatation risk assessment, and per-site aortic Z-scores — all in one place.</p>
+  </div>
+
+  <div class="about-box">
+    <span class="oss-tag">Open source</span>
+    <p><strong>DR. NVS KRISHNA REDDY</strong>, is a DM Endocrinology Resident at All India Institute of Medical Sciences, Bhopal.</p>
+    <p>This is an Open Source Software developed for calculation of Centiles, SD scores, and aortic dilatation risk in Turner syndrome. The calculator automatically switches between the nomograms to be used.</p>
+  </div>
+
+  <!-- ================= MENU ================= -->
+  <div id="view-menu">
+    <div class="menu-grid">
+      <div class="menu-card" onclick="showView('height')">
+        <div class="num">01</div>
+        <h3>Height</h3>
+        <p>Centile &amp; SDS for height — choose General (IAP, boys or girls) or Turner-specific (TS-Indian &amp; Lyon cohorts).</p>
+      </div>
+      <div class="menu-card" onclick="showView('dilatation')">
+        <div class="num">02</div>
+        <h3>Aortic Dilatation Assessment</h3>
+        <p>ASI, AHI, and Z-score with age- and risk-factor-adjusted surveillance recommendation.</p>
+      </div>
+      <div class="menu-card" onclick="showView('indices')">
+        <div class="num">03</div>
+        <h3>Aortic Indices</h3>
+        <p>Z-score by aortic level (annulus, root, ascending aorta, arch segments, etc.), age-adaptive reference.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 1. HEIGHT ================= -->
+  <div id="view-height" style="display:none">
+    <button class="back-btn" onclick="showView('menu')">← Back to menu</button>
+    <div class="card">
+      <h2>Height — Centile &amp; SDS</h2>
+
+      <div class="field">
+        <label>Reference type</label>
+        <div class="toggle-row">
+          <button type="button" id="htGeneralBtn" class="active" onclick="setHeightMode('general')">General (IAP)</button>
+          <button type="button" id="htTSBtn" onclick="setHeightMode('ts')">Turner-specific</button>
+        </div>
+      </div>
+
+      <div class="field" id="htSexField">
+        <label>Sex</label>
+        <div class="toggle-row">
+          <button type="button" data-sex="female" class="active" onclick="setHtSex('female',this)">Female</button>
+          <button type="button" data-sex="male" onclick="setHtSex('male',this)">Male</button>
+        </div>
+        <span class="hint" id="htSexHint">General reference: choose sex. Boys use the IAP boys' chart; girls use the IAP girls' chart.</span>
+      </div>
+
+      <form id="heightForm">
+        <div class="field">
+          <label>Chronological age</label>
+          <div class="age-row">
+            <div><input type="number" id="htAgeY" min="0" max="25" step="1" placeholder="Years" required><span class="hint">Years</span></div>
+            <div><input type="number" id="htAgeM" min="0" max="11" step="1" placeholder="Months" value="0"><span class="hint">Months</span></div>
+            <div><input type="number" id="htAgeD" min="0" max="30" step="1" placeholder="Days" value="0"><span class="hint">Days</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="htHeight">Height <span class="unit">(cm)</span></label>
+          <input type="number" id="htHeight" step="0.1" min="30" max="200" placeholder="e.g. 121.4" required>
+        </div>
+        <button type="submit" class="compute-btn">Calculate Centile &amp; SDS</button>
+      </form>
+    </div>
+    <div class="results-wrap" id="heightResults">
+      <div class="empty-state">Enter age and height, then calculate.</div>
+    </div>
+  </div>
+
+  <!-- ================= 2. AORTIC DILATATION ASSESSMENT ================= -->
+  <div id="view-dilatation" style="display:none">
+    <button class="back-btn" onclick="showView('menu')">← Back to menu</button>
+    <div class="card">
+      <h2>Aortic Dilatation Assessment</h2>
+      <form id="dilatForm">
+        <div class="field">
+          <label>Chronological age</label>
+          <div class="age-row">
+            <div><input type="number" id="dlAgeY" min="0" max="90" step="1" placeholder="Years" required><span class="hint">Years</span></div>
+            <div><input type="number" id="dlAgeM" min="0" max="11" step="1" placeholder="Months" value="0"><span class="hint">Months</span></div>
+            <div><input type="number" id="dlAgeD" min="0" max="30" step="1" placeholder="Days" value="0"><span class="hint">Days</span></div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="dlHeight">Height <span class="unit">(cm)</span></label>
+            <input type="number" id="dlHeight" step="0.1" min="30" max="200" placeholder="e.g. 130.0" required>
+          </div>
+          <div class="field">
+            <label for="dlWeight">Weight <span class="unit">(kg)</span></label>
+            <input type="number" id="dlWeight" step="0.1" min="2" max="150" placeholder="e.g. 30.0" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="dlDiameter">Ascending aortic diameter <span class="unit">(mm)</span></label>
+          <input type="number" id="dlDiameter" step="0.1" min="5" max="70" placeholder="e.g. 25.0" required>
+        </div>
+        <div class="field">
+          <label>Risk factors present</label>
+          <div class="checkbox-row">
+            <label class="checkbox-item"><input type="checkbox" id="dlBAV"> Bicuspid aortic valve (BAV)</label>
+            <label class="checkbox-item"><input type="checkbox" id="dlHTN"> Hypertension (HTN)</label>
+            <label class="checkbox-item"><input type="checkbox" id="dlCoA"> Coarctation of aorta (CoA)</label>
+          </div>
+          <span class="hint">Any one checked shifts the risk category upward per the published workflow.</span>
+        </div>
+        <button type="submit" class="compute-btn">Assess Dilatation Risk</button>
+      </form>
+    </div>
+    <div id="dilatResults"></div>
+  </div>
+
+  <!-- ================= 3. AORTIC INDICES (per-site Z) ================= -->
+  <div id="view-indices" style="display:none">
+    <button class="back-btn" onclick="showView('menu')">← Back to menu</button>
+
+    <div class="branch-banner" id="branchBanner">
+      <strong id="branchTag">—</strong>
+      <span id="branchDesc">Enter an age to see which reference equation set applies.</span>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>Patient parameters</h2>
+        <form id="calcForm">
+          <div class="field">
+            <label for="age">Age</label>
+            <input type="number" id="age" step="0.1" min="0.1" max="100" placeholder="e.g. 12.5" required>
+            <span class="hint">Years. &lt;15y → Quezada (Turner cohort); ≥15y → Campens (general population).</span>
+          </div>
+          <div class="field">
+            <label>Sex</label>
+            <div class="toggle-row">
+              <button type="button" data-sex="female" class="active" id="idxSexF">Female</button>
+              <button type="button" data-sex="male" id="idxSexM">Male</button>
+            </div>
+            <span class="hint">Used by the Campens (≥15y) equations. The Quezada equations (&lt;15y) were derived in a Turner syndrome — i.e. all-female — cohort.</span>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="height">Height <span class="unit">(cm)</span></label>
+              <input type="number" id="height" step="0.1" min="30" max="230" placeholder="e.g. 130.0" required>
+            </div>
+            <div class="field">
+              <label for="weight">Weight <span class="unit">(kg)</span></label>
+              <input type="number" id="weight" step="0.1" min="2" max="200" placeholder="e.g. 30.0" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="site">Aortic level measured</label>
+            <select id="site"></select>
+            <span class="hint" id="siteHint"></span>
+          </div>
+          <div class="field">
+            <label for="diameter">Measured diameter <span class="unit">(mm)</span></label>
+            <input type="number" id="diameter" step="0.1" min="3" max="80" placeholder="e.g. 25.0" required>
+          </div>
+          <button type="submit" class="compute-btn">Calculate Z-score</button>
+        </form>
+      </div>
+      <div class="card result-card empty" id="resultCard">
+        Enter age, sex, height, weight, the aortic level, and the measured diameter, then calculate.
+      </div>
+    </div>
+  </div>
+
+  <footer class="citation">
+    <strong>References.</strong> Khadilkar VV, Karguppikar MB, Ekbote VH, Khadilkar AV. Turner syndrome growth charts: A western India experience. Indian J Endocr Metab 2020;24:333–7. Lyon AJ, Preece MA, Grant DB. Growth curve for girls with Turner syndrome. Arch Dis Child 1985;60:932–5. Khadilkar V, Yadav S, Agrawal KK, et al. Revised IAP growth charts for height, weight and BMI for 5- to 18-year-old Indian children. Indian Pediatr 2015;52:47–55. Quezada E, Lapidus J, Shaughnessy R, Chen Z, Silberbach M. Aortic dimensions in Turner syndrome. Am J Med Genet A 2015;167A:2527–2532. Campens L, Demulier L, De Groote K, et al. Reference values for echocardiographic assessment of the diameter of the aortic root and ascending aorta spanning all age categories. Am J Cardiol 2014;114:914–920. Aortic dilatation definition and age/risk-factor-stratified surveillance workflow (ASI, AHI, Z thresholds and elective surgery criteria) as supplied by the user. Body surface area by Haycock GB, Schwartz GJ, Wisotsky DH. J Pediatr 1978;93:62–66.
+  </footer>
+</div>
+
+<script>
+(function(){
+
+  // ============================================================
+  // Shared math helpers
+  // ============================================================
+  function erf(x){
+    const sign = x < 0 ? -1 : 1; x = Math.abs(x);
+    const a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429, p=0.3275911;
+    const t = 1/(1+p*x);
+    const y = 1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+    return sign*y;
+  }
+  function normalCDF(z){ return 0.5*(1+erf(z/Math.sqrt(2))); }
+  function haycockBSA(heightCm, weightKg){ return 0.024265 * Math.pow(heightCm, 0.3964) * Math.pow(weightKg, 0.5378); }
+
+  function interpolateTable(table, ageDec){
+    if(ageDec <= table[0].age) return null;
+    if(ageDec >= table[table.length-1].age) {
+      if(Math.abs(ageDec - table[table.length-1].age) < 1e-9) return {row: table[table.length-1], extrapolated:false};
+      return {row: table[table.length-1], extrapolated:true};
+    }
+    for(let i=0;i<table.length-1;i++){
+      const a = table[i], b = table[i+1];
+      if(ageDec >= a.age && ageDec <= b.age){
+        const frac = (ageDec - a.age)/(b.age - a.age);
+        const row = {age: ageDec};
+        Object.keys(a).forEach(k=>{ if(k==='age') return; row[k] = a[k] + frac*(b[k]-a[k]); });
+        return {row, extrapolated:false};
+      }
+    }
+    return null;
+  }
+
+  const CENTILE_KEYS = ['c3','c10','c25','c50','c75','c90','c97'];
+  const CENTILE_Z = {c3:-1.8808, c10:-1.2816, c25:-0.6745, c50:0, c75:0.6745, c90:1.2816, c97:1.8808};
+
+  function centileSDSFromQuantiles(row, height){
+    const vals = CENTILE_KEYS.map(k=>row[k]);
+    const zs = CENTILE_KEYS.map(k=>CENTILE_Z[k]);
+    let z;
+    if(height <= vals[0]){
+      const slope = (zs[1]-zs[0])/(vals[1]-vals[0]);
+      z = zs[0] + slope*(height-vals[0]);
+    } else if(height >= vals[vals.length-1]){
+      const n = vals.length;
+      const slope = (zs[n-1]-zs[n-2])/(vals[n-1]-vals[n-2]);
+      z = zs[n-1] + slope*(height-vals[n-1]);
+    } else {
+      for(let i=0;i<vals.length-1;i++){
+        if(height >= vals[i] && height <= vals[i+1]){
+          const frac = (height-vals[i])/(vals[i+1]-vals[i]);
+          z = zs[i] + frac*(zs[i+1]-zs[i]);
+          break;
+        }
+      }
+    }
+    const centile = normalCDF(z)*100;
+    return {z, centile};
+  }
+  function formatCentile(c){
+    if(c < 0.5) return '<0.5th';
+    if(c > 99.5) return '>99.5th';
+    return c.toFixed(1)+'th';
+  }
+
+  // ============================================================
+  // View switching
+  // ============================================================
+  window.showView = function(name){
+    ['menu','height','dilatation','indices'].forEach(v=>{
+      document.getElementById('view-'+v).style.display = (v===name) ? '' : 'none';
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+
+  // ============================================================
+  // TOOL 1 — HEIGHT
+  // ============================================================
+  const TS_INDIAN = [
+    {age:1,c3:61.1,c10:63.0,c25:65.0,c50:67.1,c75:69.2,c90:71.2,c97:73.1},
+    {age:2,c3:70.0,c10:72.1,c25:74.4,c50:76.8,c75:79.2,c90:81.5,c97:83.7},
+    {age:3,c3:77.7,c10:80.1,c25:82.6,c50:85.3,c75:88.0,c90:90.5,c97:92.9},
+    {age:4,c3:83.5,c10:86.1,c25:88.8,c50:91.7,c75:94.6,c90:97.3,c97:99.9},
+    {age:5,c3:88.1,c10:90.9,c25:93.7,c50:96.8,c75:99.8,c90:102.7,c97:105.4},
+    {age:6,c3:92.3,c10:95.2,c25:98.2,c50:101.4,c75:104.6,c90:107.6,c97:110.4},
+    {age:7,c3:96.3,c10:99.3,c25:102.4,c50:105.8,c75:109.1,c90:112.2,c97:115.2},
+    {age:8,c3:100.1,c10:103.2,c25:106.5,c50:110.0,c75:113.4,c90:116.7,c97:119.8},
+    {age:9,c3:103.7,c10:107.0,c25:110.3,c50:113.9,c75:117.5,c90:120.9,c97:124.1},
+    {age:10,c3:107.3,c10:110.6,c25:114.1,c50:117.8,c75:121.5,c90:125.0,c97:128.3},
+    {age:11,c3:110.6,c10:114.0,c25:117.6,c50:121.4,c75:125.3,c90:128.9,c97:132.3},
+    {age:12,c3:113.7,c10:117.2,c25:120.9,c50:124.8,c75:128.7,c90:132.4,c97:136.0},
+    {age:13,c3:116.8,c10:120.4,c25:124.2,c50:128.2,c75:132.2,c90:136.0,c97:139.7},
+    {age:14,c3:119.7,c10:123.4,c25:127.3,c50:131.4,c75:135.5,c90:139.4,c97:143.1},
+    {age:15,c3:122.6,c10:126.4,c25:130.4,c50:134.6,c75:138.9,c90:142.9,c97:146.7},
+    {age:16,c3:125.2,c10:129.0,c25:133.1,c50:137.4,c75:141.8,c90:145.8,c97:149.7},
+    {age:17,c3:126.7,c10:130.7,c25:134.8,c50:139.2,c75:143.6,c90:147.7,c97:151.6},
+    {age:18,c3:127.6,c10:131.5,c25:135.7,c50:140.1,c75:144.5,c90:148.7,c97:152.6}
+  ];
+  const IAP_GIRLS = [
+    {age:5.0,c3:97.2,c10:100.5,c25:103.9,c50:107.5,c75:111.3,c90:115.2,c97:119.3},
+    {age:5.5,c3:99.8,c10:103.2,c25:106.8,c50:110.5,c75:114.4,c90:118.3,c97:122.5},
+    {age:6.0,c3:102.3,c10:106.0,c25:109.7,c50:113.5,c75:117.4,c90:121.5,c97:125.6},
+    {age:6.5,c3:104.9,c10:108.7,c25:112.5,c50:116.5,c75:120.5,c90:124.6,c97:128.7},
+    {age:7.0,c3:107.4,c10:111.4,c25:115.4,c50:119.4,c75:123.5,c90:127.7,c97:131.9},
+    {age:7.5,c3:110.0,c10:114.1,c25:118.2,c50:122.4,c75:126.6,c90:130.8,c97:135.0},
+    {age:8.0,c3:112.6,c10:116.8,c25:121.1,c50:125.4,c75:129.6,c90:133.9,c97:138.1},
+    {age:8.5,c3:115.2,c10:119.6,c25:124.0,c50:128.4,c75:132.7,c90:137.0,c97:141.3},
+    {age:9.0,c3:117.8,c10:122.4,c25:126.9,c50:131.4,c75:135.8,c90:140.2,c97:144.5},
+    {age:9.5,c3:120.5,c10:125.2,c25:129.9,c50:134.4,c75:138.9,c90:143.3,c97:147.6},
+    {age:10.0,c3:123.3,c10:128.1,c25:132.8,c50:137.4,c75:142.0,c90:146.4,c97:150.8},
+    {age:10.5,c3:126.1,c10:130.9,c25:135.7,c50:140.4,c75:145.0,c90:149.5,c97:153.9},
+    {age:11.0,c3:128.8,c10:133.7,c25:138.6,c50:143.3,c75:147.9,c90:152.4,c97:156.8},
+    {age:11.5,c3:131.5,c10:136.4,c25:141.2,c50:145.9,c75:150.6,c90:155.1,c97:159.6},
+    {age:12.0,c3:134.0,c10:138.9,c25:143.7,c50:148.4,c75:153.0,c90:157.5,c97:162.0},
+    {age:12.5,c3:136.3,c10:141.1,c25:145.8,c50:150.5,c75:155.1,c90:159.6,c97:164.1},
+    {age:13.0,c3:138.2,c10:142.9,c25:147.6,c50:152.2,c75:156.8,c90:161.3,c97:165.9},
+    {age:13.5,c3:139.9,c10:144.5,c25:149.1,c50:153.6,c75:158.2,c90:162.7,c97:167.2},
+    {age:14.0,c3:141.3,c10:145.8,c25:150.2,c50:154.7,c75:159.2,c90:163.7,c97:168.2},
+    {age:14.5,c3:142.4,c10:146.8,c25:151.1,c50:155.5,c75:160.0,c90:164.5,c97:169.0},
+    {age:15.0,c3:143.3,c10:147.5,c25:151.8,c50:156.1,c75:160.5,c90:165.0,c97:169.5},
+    {age:15.5,c3:144.1,c10:148.1,c25:152.3,c50:156.6,c75:160.9,c90:165.3,c97:169.8},
+    {age:16.0,c3:144.7,c10:148.6,c25:152.7,c50:156.9,c75:161.2,c90:165.6,c97:170.1},
+    {age:16.5,c3:145.2,c10:149.1,c25:153.1,c50:157.2,c75:161.4,c90:165.7,c97:170.2},
+    {age:17.0,c3:145.7,c10:149.5,c25:153.4,c50:157.4,c75:161.6,c90:165.9,c97:170.4},
+    {age:17.5,c3:146.2,c10:149.8,c25:153.6,c50:157.6,c75:161.7,c90:166.0,c97:170.5},
+    {age:18.0,c3:146.6,c10:150.2,c25:153.9,c50:157.8,c75:161.9,c90:166.1,c97:170.6}
+  ];
+  const IAP_BOYS = [
+    {age:5.0,c3:99.0,c10:102.3,c25:105.6,c50:108.9,c75:112.4,c90:115.9,c97:119.4},
+    {age:5.5,c3:101.6,c10:105.0,c25:108.4,c50:111.9,c75:115.4,c90:119.0,c97:122.7},
+    {age:6.0,c3:104.2,c10:107.7,c25:111.2,c50:114.8,c75:118.5,c90:122.2,c97:126.0},
+    {age:6.5,c3:106.8,c10:110.4,c25:114.0,c50:117.8,c75:121.6,c90:125.4,c97:129.3},
+    {age:7.0,c3:109.3,c10:113.0,c25:116.8,c50:120.7,c75:124.6,c90:128.6,c97:132.6},
+    {age:7.5,c3:111.8,c10:115.7,c25:119.6,c50:123.5,c75:127.6,c90:131.7,c97:135.9},
+    {age:8.0,c3:114.3,c10:118.2,c25:122.3,c50:126.4,c75:130.5,c90:134.8,c97:139.1},
+    {age:8.5,c3:116.7,c10:120.8,c25:124.9,c50:129.1,c75:133.4,c90:137.8,c97:142.2},
+    {age:9.0,c3:119.0,c10:123.2,c25:127.5,c50:131.8,c75:136.3,c90:140.7,c97:145.3},
+    {age:9.5,c3:121.3,c10:125.6,c25:130.0,c50:134.5,c75:139.1,c90:143.7,c97:148.3},
+    {age:10.0,c3:123.6,c10:128.1,c25:132.6,c50:137.2,c75:141.9,c90:146.6,c97:151.4},
+    {age:10.5,c3:125.9,c10:130.5,c25:135.2,c50:139.9,c75:144.7,c90:149.5,c97:154.4},
+    {age:11.0,c3:128.2,c10:133.0,c25:137.8,c50:142.7,c75:147.6,c90:152.5,c97:157.5},
+    {age:11.5,c3:130.7,c10:135.6,c25:140.6,c50:145.5,c75:150.5,c90:155.6,c97:160.6},
+    {age:12.0,c3:133.2,c10:138.3,c25:143.3,c50:148.4,c75:153.5,c90:158.6,c97:163.7},
+    {age:12.5,c3:135.7,c10:141.0,c25:146.2,c50:151.4,c75:156.5,c90:161.7,c97:166.8},
+    {age:13.0,c3:138.3,c10:143.7,c25:149.0,c50:154.3,c75:159.5,c90:164.7,c97:169.9},
+    {age:13.5,c3:140.9,c10:146.4,c25:151.8,c50:157.2,c75:162.4,c90:167.6,c97:172.7},
+    {age:14.0,c3:143.4,c10:149.0,c25:154.5,c50:159.9,c75:165.1,c90:170.3,c97:175.4},
+    {age:14.5,c3:145.8,c10:151.5,c25:157.0,c50:162.3,c75:167.6,c90:172.7,c97:177.7},
+    {age:15.0,c3:148.0,c10:153.7,c25:159.2,c50:164.5,c75:169.7,c90:174.8,c97:179.7},
+    {age:15.5,c3:150.0,c10:155.7,c25:161.2,c50:166.5,c75:171.6,c90:176.5,c97:181.4},
+    {age:16.0,c3:151.8,c10:157.4,c25:162.9,c50:168.1,c75:173.1,c90:178.0,c97:182.7},
+    {age:16.5,c3:153.4,c10:159.1,c25:164.5,c50:169.6,c75:174.5,c90:179.3,c97:183.8},
+    {age:17.0,c3:155.0,c10:160.6,c25:165.9,c50:171.0,c75:175.8,c90:180.4,c97:184.8},
+    {age:17.5,c3:156.6,c10:162.1,c25:167.3,c50:172.3,c75:177.0,c90:181.5,c97:185.8},
+    {age:18.0,c3:158.1,c10:163.6,c25:168.7,c50:173.6,c75:178.2,c90:182.5,c97:186.7}
+  ];
+  const LYON_MEAN = [
+    {age:1,mean:63.8},{age:2,mean:77.5},{age:3,mean:84.2},{age:4,mean:91.1},
+    {age:5,mean:96.5},{age:6,mean:103.1},{age:7,mean:106.0},{age:8,mean:111.4},
+    {age:9,mean:115.0},{age:10,mean:119.5},{age:11,mean:122.8},{age:12,mean:126.5},
+    {age:13,mean:130.7},{age:14,mean:132.6},{age:15,mean:135.8},{age:16,mean:138.6},
+    {age:17,mean:140.6},{age:18,mean:143.4},{age:19,mean:143.2},{age:20,mean:142.9}
+  ];
+
+  let heightMode = 'general';
+  let htSex = 'female';
+
+  window.setHeightMode = function(mode){
+    heightMode = mode;
+    document.getElementById('htGeneralBtn').classList.toggle('active', mode==='general');
+    document.getElementById('htTSBtn').classList.toggle('active', mode==='ts');
+    document.getElementById('htSexField').style.display = (mode==='general') ? '' : 'none';
+    document.getElementById('heightResults').innerHTML = '<div class="empty-state">Enter age and height, then calculate.</div>';
+  };
+  window.setHtSex = function(sex, btn){
+    htSex = sex;
+    document.querySelectorAll('#htSexField .toggle-row button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  };
+
+  function computeIAPGeneric(table, ageDec, height){
+    if(ageDec < table[0].age) return {status:'below', note:'This IAP reference begins at age 5 years.'};
+    const res = interpolateTable(table, ageDec);
+    if(!res) return {status:'na'};
+    const {z, centile} = centileSDSFromQuantiles(res.row, height);
+    return {status:'ok', z, centile, extrapolated: res.extrapolated};
+  }
+  function computeTSIndian(ageDec, height){
+    if(ageDec < TS_INDIAN[0].age) return {status:'below', note:'TS-Indian reference begins at age 1 year.'};
+    const res = interpolateTable(TS_INDIAN, ageDec);
+    if(!res) return {status:'na'};
+    const {z, centile} = centileSDSFromQuantiles(res.row, height);
+    return {status:'ok', z, centile, extrapolated: res.extrapolated};
+  }
+  function computeLyon(ageDec, height){
+    if(ageDec < LYON_MEAN[0].age) return {status:'below', note:'Lyon reference begins at age 1 year.'};
+    const res = interpolateTable(LYON_MEAN, ageDec);
+    if(!res) return {status:'na'};
+    const mean = res.row.mean, sd = 0.047*mean, z = (height-mean)/sd, centile = normalCDF(z)*100;
+    return {status:'ok', z, centile, extrapolated: res.extrapolated, bucket20: ageDec>=20};
+  }
+
+  function panelHTML(tagClass, tagLabel, title, result, extraCaveat){
+    let body = '';
+    if(result.status === 'below' || result.status === 'na'){
+      body = `<div class="na-note">${result.note || 'Not applicable at this age for this reference.'}</div>`;
+    } else {
+      body = `
+        <div class="metric-row"><span class="metric-label">Centile</span><span class="metric-value">${formatCentile(result.centile)}</span></div>
+        <div class="metric-row"><span class="metric-label">SDS (Z-score)</span><span class="metric-value">${result.z >= 0 ? '+' : ''}${result.z.toFixed(2)}</span></div>
+      `;
+      if(result.extrapolated) body += `<div class="caveat">Age is beyond this reference's validated range — value extrapolated from the terminal reference point. Interpret with caution.</div>`;
+      if(extraCaveat) body += `<div class="caveat">${extraCaveat}</div>`;
+    }
+    return `<div class="result-card"><span class="tag ${tagClass}">${tagLabel}</span><h3>${title}</h3>${body}</div>`;
+  }
+
+  document.getElementById('heightForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const y = parseFloat(document.getElementById('htAgeY').value) || 0;
+    const m = parseFloat(document.getElementById('htAgeM').value) || 0;
+    const d = parseFloat(document.getElementById('htAgeD').value) || 0;
+    const height = parseFloat(document.getElementById('htHeight').value);
+    const ageDec = y + (m/12) + (d/365.25);
+    const wrap = document.getElementById('heightResults');
+
+    if(isNaN(height) || ageDec <= 0){
+      wrap.className = 'results-wrap';
+      wrap.innerHTML = `<div class="empty-state">Please enter a valid age and height.</div>`;
+      return;
+    }
+
+    if(heightMode === 'general'){
+      wrap.className = 'results-wrap';
+      const table = htSex === 'male' ? IAP_BOYS : IAP_GIRLS;
+      const result = computeIAPGeneric(table, ageDec, height);
+      wrap.innerHTML = panelHTML('iap', htSex==='male' ? 'IAP · boys' : 'IAP · girls', 'IAP 2015 — general population, Indian girls/boys', result);
+    } else {
+      wrap.className = 'results-wrap cols-3';
+      const ts = computeTSIndian(ageDec, height);
+      const lyon = computeLyon(ageDec, height);
+      const iap = computeIAPGeneric(IAP_GIRLS, ageDec, height);
+      let lyonCaveat = null;
+      if(lyon.status==='ok' && lyon.bucket20) lyonCaveat = 'Lyon reference for age ≥20y is a single pooled "20+" bucket (not age-resolved).';
+      wrap.innerHTML =
+        panelHTML('ts', 'TS · Indian cohort', 'Khadilkar 2020 (Turner, India)', ts) +
+        panelHTML('lyon', 'TS · Lyon cohort', 'Lyon 1985 (Turner, pooled European)', lyon, lyonCaveat) +
+        panelHTML('iap', 'General population', 'IAP 2015 (Indian girls, general population)', iap);
+    }
+  });
+
+  // ============================================================
+  // TOOL 2 — AORTIC DILATATION ASSESSMENT
+  // ============================================================
+  // Z-score reference: Quezada AAO (<15y, Turner) / Campens AA female (>=15y, general population)
+  const QUEZADA_AAO = { intercept:0.942, bsaCoef:0.593, bsa2Coef:-0.122, mse:0.012 };
+  const CAMPENS_AA_FEMALE = { intercept:1.006, ageCoef:0.172, bsaCoef:0.087, see:0.0450 };
+
+  function quezadaAAO_Z(bsa, diameterMm){
+    const diameterCm = diameterMm/10;
+    const predictedSqrt = QUEZADA_AAO.intercept + QUEZADA_AAO.bsaCoef*bsa + QUEZADA_AAO.bsa2Coef*Math.pow(bsa,2);
+    const see = Math.sqrt(QUEZADA_AAO.mse);
+    return (Math.sqrt(diameterCm) - predictedSqrt) / see;
+  }
+  function campensAA_Z(bsaH, ageYears, diameterMm){
+    const c = CAMPENS_AA_FEMALE;
+    const predictedLog10 = c.intercept + c.ageCoef*Math.log10(ageYears) + c.bsaCoef*bsaH;
+    return (Math.log10(diameterMm) - predictedLog10) / c.see;
+  }
+
+  function riskTierAdult(asi, ahi, z, riskFactor){
+    if(!riskFactor){
+      const tierASI = asi<=2.0 ? 0 : (asi<2.3 ? 1 : 2);
+      const tierAHI = ahi<=20 ? 0 : (ahi<23 ? 1 : 2);
+      const tierZ   = z<=2.5  ? 0 : (z<3.5   ? 1 : 2);
+      const tier = Math.max(tierASI, tierAHI, tierZ);
+      return [
+        {label:'Low risk', cls:'low', interval:'Every 5 – 10 years'},
+        {label:'Moderate risk', cls:'moderate', interval:'Every 2 – 5 years'},
+        {label:'Moderate-high risk', cls:'moderate-high', interval:'Every 1 – 2 years'}
+      ][tier];
+    } else {
+      const tierASI = asi<2.3 ? 0 : 1;
+      const tierAHI = ahi<23 ? 0 : 1;
+      const tierZ   = z<3.5 ? 0 : 1;
+      const tier = Math.max(tierASI, tierAHI, tierZ);
+      return [
+        {label:'Moderate-high risk', cls:'moderate-high', interval:'Every 1 – 2 years'},
+        {label:'High risk', cls:'high', interval:'Every 6 months – 1 year'}
+      ][tier];
+    }
+  }
+  function riskTierPediatric(z, riskFactor){
+    if(!riskFactor){
+      return z < 3.0
+        ? {label:'Low risk', cls:'low', interval:'Every 3 – 5 years'}
+        : {label:'Moderate risk', cls:'moderate', interval:'Every 1 – 2 years'};
+    } else {
+      return z < 3.0
+        ? {label:'Moderate risk', cls:'moderate', interval:'Every 1 – 2 years'}
+        : {label:'High risk', cls:'high', interval:'Every 6 months – 1 year'};
+    }
+  }
+
+  document.getElementById('dilatForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const y = parseFloat(document.getElementById('dlAgeY').value) || 0;
+    const m = parseFloat(document.getElementById('dlAgeM').value) || 0;
+    const d = parseFloat(document.getElementById('dlAgeD').value) || 0;
+    const height = parseFloat(document.getElementById('dlHeight').value);
+    const weight = parseFloat(document.getElementById('dlWeight').value);
+    const diameterMm = parseFloat(document.getElementById('dlDiameter').value);
+    const bav = document.getElementById('dlBAV').checked;
+    const htn = document.getElementById('dlHTN').checked;
+    const coa = document.getElementById('dlCoA').checked;
+    const riskFactor = bav || htn || coa;
+
+    const out = document.getElementById('dilatResults');
+
+    if(isNaN(height) || isNaN(weight) || isNaN(diameterMm) || (y+m+d)<=0){
+      out.innerHTML = `<div class="err-box">Please complete all fields before calculating.</div>`;
+      return;
+    }
+
+    const ageDec = y + (m/12) + (d/365.25);
+    const bsa = haycockBSA(height, weight);
+    const asi = (diameterMm/10) / bsa;          // cm/m2
+    const ahi = diameterMm / (height/100);       // mm/m
+
+    const isPediatric = ageDec < 15;
+    const z = isPediatric ? quezadaAAO_Z(bsa, diameterMm) : campensAA_Z(bsa, ageDec, diameterMm);
+    const zFormulaLabel = isPediatric ? 'Quezada 2015 · Turner cohort (ascending aorta)' : 'Campens 2014 · general population, female (ascending aorta)';
+
+    const tier = isPediatric ? riskTierPediatric(z, riskFactor) : riskTierAdult(asi, ahi, z, riskFactor);
+
+    // Simple "aortic size" dilation flag (definition supplied): Z>2.5, AHI>20mm/m, ASI>2.0cm/m2
+    const dilated = (z > 2.5) || (ahi > 20) || (asi > 2.0);
+
+    // Elective surgery one-time-value threshold: ASI>2.5, AHI>25, Z>4
+    const surgeryFlag = (asi > 2.5) || (ahi > 25) || (z > 4);
+
+    out.innerHTML = `
+      <div class="banner ${dilated ? 'dilated' : 'normal'}">
+        ${dilated ? 'Aortic dilation present' : 'No aortic dilation by definition'}
+        <span class="sub">Definition: Z &gt; 2.5, AHI &gt; 20 mm/m, or ASI &gt; 2.0 cm/m²</span>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-box"><div class="mlabel">ASI</div><div class="mval">${asi.toFixed(2)}</div><div class="hint">cm/m²</div></div>
+        <div class="metric-box"><div class="mlabel">AHI</div><div class="mval">${ahi.toFixed(1)}</div><div class="hint">mm/m</div></div>
+        <div class="metric-box"><div class="mlabel">Z-score</div><div class="mval">${z>=0?'+':''}${z.toFixed(2)}</div><div class="hint">${zFormulaLabel}</div></div>
+      </div>
+
+      <div class="risk-card">
+        <span class="risk-tier ${tier.cls}">${tier.label}</span>
+        <p class="interval">Recommended surveillance: <strong>${tier.interval}</strong></p>
+        <p class="hint" style="margin-top:10px;">Age band used: ${isPediatric ? '< 15 years' : '≥ 15 years'} · Risk factors present: ${riskFactor ? [bav&&'BAV',htn&&'HTN',coa&&'CoA'].filter(Boolean).join(', ') : 'None'}</p>
+        ${surgeryFlag ? `<div class="surgery-flag">Meets published one-time threshold for elective aortic surgery evaluation (ASI &gt;2.5 cm/m², AHI &gt;25 mm/m, or Z &gt;4). Rapid growth (&gt;3 mm/year or +1 Z/year) is a separate, independent surgical indication that requires serial measurements — not assessed by a single reading here.` : ''}
+      </div>
+    `;
+  });
+
+  // ============================================================
+  // TOOL 3 — AORTIC INDICES (per-site Z, unchanged calculation, rescaled verdict)
+  // ============================================================
+  let idxSex = 'female';
+  document.getElementById('idxSexF').addEventListener('click', function(){ idxSex='female'; this.classList.add('active'); document.getElementById('idxSexM').classList.remove('active'); });
+  document.getElementById('idxSexM').addEventListener('click', function(){ idxSex='male'; this.classList.add('active'); document.getElementById('idxSexF').classList.remove('active'); });
+
+  const QUEZADA_SITES = {
+    ANN:  { label:'Aortic valve annulus (ANN)',            intercept:0.891, bsaCoef:0.414, bsa2Coef:-0.081, mse:0.007 },
+    AR:   { label:'Aortic root (AR, sinuses of Valsalva)',  intercept:1.035, bsaCoef:0.589, bsa2Coef:-0.129, mse:0.009 },
+    AAO:  { label:'Ascending aorta (AAO)',                  intercept:0.942, bsaCoef:0.593, bsa2Coef:-0.122, mse:0.012 },
+    STJ:  { label:'Sinotubular junction (STJ)',             intercept:0.895, bsaCoef:0.586, bsa2Coef:-0.124, mse:0.009 },
+    PTA:  { label:'Proximal transverse arch (PTA)',         intercept:0.881, bsaCoef:0.539, bsa2Coef:-0.107, mse:0.012 },
+    DTA:  { label:'Distal transverse arch (DTA)',           intercept:0.844, bsaCoef:0.428, bsa2Coef:-0.072, mse:0.012 },
+    ISTH: { label:'Aortic isthmus (ISTH)',                  intercept:0.895, bsaCoef:0.279, bsa2Coef:-0.038, mse:0.014 },
+    DAO:  { label:'Descending aorta at diaphragm (DAO)',    intercept:0.676, bsaCoef:0.503, bsa2Coef:-0.094, mse:0.009 }
+  };
+  const CAMPENS_SITES = {
+    SoV: { label:'Aortic root (sinuses of Valsalva, SoV)',
+      male:   { intercept:1.115, ageCoef:0.137, bsaCoef:0.094, see:0.0388 },
+      female: { intercept:1.112, ageCoef:0.132, bsaCoef:0.080, see:0.0427 } },
+    AA: { label:'Ascending aorta (AA)',
+      male:   { intercept:1.038, ageCoef:0.187, bsaCoef:0.068, see:0.0433 },
+      female: { intercept:1.006, ageCoef:0.172, bsaCoef:0.087, see:0.0450 } }
+  };
+
+  function quezadaZ(siteKey, bsa, diameterMm){
+    const c = QUEZADA_SITES[siteKey];
+    const diameterCm = diameterMm / 10;
+    const predictedSqrt = c.intercept + c.bsaCoef*bsa + c.bsa2Coef*Math.pow(bsa,2);
+    const see = Math.sqrt(c.mse);
+    const z = (Math.sqrt(diameterCm) - predictedSqrt) / see;
+    const predictedMm = Math.pow(predictedSqrt,2) * 10;
+    return { z, see, predictedMm, ulnMm: null, formulaLabel:'Quezada 2015 · Turner cohort · BSA(Haycock)', siteLabel:c.label };
+  }
+  function campensZ(siteKey, bsaH, ageYears, sexVal, diameterMm){
+    const c = CAMPENS_SITES[siteKey][sexVal];
+    const predictedLog10 = c.intercept + c.ageCoef*Math.log10(ageYears) + c.bsaCoef*bsaH;
+    const z = (Math.log10(diameterMm) - predictedLog10) / c.see;
+    const predictedMm = Math.pow(10, predictedLog10);
+    const ulnMm = Math.pow(10, predictedLog10 + 1.96*c.see);
+    return { z, see:c.see, predictedMm, ulnMm, formulaLabel:'Campens 2014 · general population · BSA(Haycock), sex: '+sexVal, siteLabel:CAMPENS_SITES[siteKey].label };
+  }
+  // Verdict rescaled to the supplied "Aortic Size" definition: dilation = Z > 2.5
+  function verdictFor(z){
+    return z > 2.5
+      ? {cls:'dilated', text:'Z > 2.5 — meets aortic dilation definition'}
+      : {cls:'normal', text:'Z ≤ 2.5 — below aortic dilation threshold'};
+  }
+
+  const ageInput = document.getElementById('age');
+  const siteSelect = document.getElementById('site');
+  const branchTag = document.getElementById('branchTag');
+  const branchDesc = document.getElementById('branchDesc');
+  const siteHint = document.getElementById('siteHint');
+
+  function currentBranch(){
+    const age = parseFloat(ageInput.value);
+    if(isNaN(age)) return null;
+    return age < 15 ? 'quezada' : 'campens';
+  }
+  function refreshSiteOptions(){
+    const branch = currentBranch();
+    const prevValue = siteSelect.value;
+    siteSelect.innerHTML = '';
+    if(branch === null){
+      branchTag.textContent = '—';
+      branchDesc.textContent = 'Enter an age to see which reference equation set applies.';
+      Object.keys(QUEZADA_SITES).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=QUEZADA_SITES[k].label; siteSelect.appendChild(o); });
+      siteHint.textContent = 'Showing all levels available once age <15y is confirmed (Quezada, 8 levels).';
+      return;
+    }
+    if(branch === 'quezada'){
+      branchTag.textContent = 'Age < 15y → Quezada 2015';
+      branchDesc.textContent = 'Turner syndrome cohort (all-female). 8 aortic levels available, BSA+BSA² model on √diameter.';
+      Object.keys(QUEZADA_SITES).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=QUEZADA_SITES[k].label; siteSelect.appendChild(o); });
+      siteHint.textContent = 'Quezada 2015, Table II. Derived in girls/women with Turner syndrome.';
+    } else {
+      branchTag.textContent = 'Age ≥ 15y → Campens 2014';
+      branchDesc.textContent = 'General population cohort. 2 levels available (sinuses of Valsalva, ascending aorta), age+BSA(Haycock)+sex model on log₁₀(diameter).';
+      Object.keys(CAMPENS_SITES).forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=CAMPENS_SITES[k].label; siteSelect.appendChild(o); });
+      siteHint.textContent = 'Campens 2014, Table 2 (Haycock-BSA rows). Only SoV and AA have published equations in this dataset for ≥15y.';
+    }
+    if([...siteSelect.options].some(o=>o.value===prevValue)) siteSelect.value = prevValue;
+  }
+  ageInput.addEventListener('input', refreshSiteOptions);
+  refreshSiteOptions();
+
+  document.getElementById('calcForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const age = parseFloat(ageInput.value);
+    const height = parseFloat(document.getElementById('height').value);
+    const weight = parseFloat(document.getElementById('weight').value);
+    const diameterMm = parseFloat(document.getElementById('diameter').value);
+    const siteKey = siteSelect.value;
+    const card = document.getElementById('resultCard');
+    card.classList.remove('empty');
+
+    if(isNaN(age) || isNaN(height) || isNaN(weight) || isNaN(diameterMm) || !siteKey){
+      card.innerHTML = `<div class="err-box">Please complete all fields before calculating.</div>`;
+      return;
+    }
+
+    const bsa = haycockBSA(height, weight);
+    const branch = age < 15 ? 'quezada' : 'campens';
+    let result = branch === 'quezada' ? quezadaZ(siteKey, bsa, diameterMm) : campensZ(siteKey, bsa, age, idxSex, diameterMm);
+    const v = verdictFor(result.z);
+
+    let warnHtml = '';
+    if(branch === 'quezada' && idxSex === 'male'){
+      warnHtml = `<div class="warn-box">The Quezada equations were derived exclusively in girls and women with Turner syndrome. Applicability to a male patient under 15 has not been established — interpret this Z-score with caution.</div>`;
+    }
+
+    card.innerHTML = `
+      <span class="formula-tag">${result.formulaLabel}</span>
+      <div class="site-name">${result.siteLabel}</div>
+      <div class="z-display"><span class="z-value">${result.z >= 0 ? '+' : ''}${result.z.toFixed(2)}</span><span class="z-label">Z-score</span></div>
+      <span class="verdict ${v.cls}">${v.text}</span>
+      <table class="detail-table">
+        <tr><td>BSA (Haycock)</td><td>${bsa.toFixed(3)} m²</td></tr>
+        <tr><td>Measured diameter</td><td>${diameterMm.toFixed(1)} mm</td></tr>
+        <tr><td>Predicted mean diameter</td><td>${result.predictedMm.toFixed(1)} mm</td></tr>
+        ${result.ulnMm ? `<tr><td>Upper limit of normal (Z 1.96)</td><td>${result.ulnMm.toFixed(1)} mm</td></tr>` : ''}
+        <tr><td>Residual SEE (log/sqrt scale)</td><td>${result.see.toFixed(4)}</td></tr>
+        <tr><td>Reference equation age band</td><td>${branch === 'quezada' ? '< 15 years' : '≥ 15 years'}</td></tr>
+      </table>
+      ${warnHtml}
+    `;
+  });
+
+})();
+</script>
+</body>
+</html>
