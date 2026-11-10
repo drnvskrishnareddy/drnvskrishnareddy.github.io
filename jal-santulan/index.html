@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>Jal Santulan</title>
-<meta name="description" content="Fluid balance and sodium monitoring for AVP deficiency (diabetes insipidus). Demo of the patient app and doctor's dashboard.">
+<meta name="description" content="Fluid balance and sodium monitoring for AVP deficiency (diabetes insipidus): patient app and doctor's dashboard, with records kept in each patient's own Google Drive.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap">
 <style>
@@ -46,6 +46,9 @@ code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; background
 ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
 .muted { color: var(--muted); } .small { font-size: 14px; }
 footer { text-align: center; color: var(--muted); font-size: 14px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+a { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -55,26 +58,41 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     <div><h1>Jal Santulan</h1><p class="hi">जल संतुलन</p></div>
   </div>
   <p class="lead">Daily water balance and sodium monitoring for people with AVP deficiency (diabetes insipidus), after pituitary or hypothalamic surgery and long term. Patients log urine, drinks, weight, sodium and desmopressin doses; the endocrine team sees risk-sorted alerts.</p>
-  <p class="note">Demo version. It uses example patients, and everything you enter stays only in this browser. Do not enter real patient information.</p>
 
   <div class="cards">
     <section class="card">
       <h2>Patient app</h2>
-      <p class="muted small">Best on a phone. Open in Chrome and use “Add to Home screen” to keep it like an app.</p>
+      <p class="muted small">Sign in with your own Google account. Best on a phone: open in Chrome and use “Add to Home screen” to keep it like an app.</p>
       <a class="btn primary" href="app/">Open the patient app</a>
     </section>
     <section class="card">
       <h2>Doctor's dashboard</h2>
-      <p class="muted small">Best on a computer or tablet.</p>
+      <p class="muted small">Sign in with the unit's Google account. Best on a computer or tablet.</p>
       <a class="btn primary" href="dashboard/">Open the doctor's dashboard</a>
     </section>
   </div>
 
   <section class="card">
-    <h2>How to try it</h2>
+    <h2>Where the records are kept</h2>
+    <ul class="plain">
+      <li>Each patient's record is a file in a <b>“Jal Santulan” folder in the patient's own Google Drive</b>. There is no Jal Santulan server or database.</li>
+      <li>After the patient agrees, the record is shared with the unit's Google account. A family member or carer can be added from the app.</li>
+      <li>Alerts are worked out in the app and on the dashboard each time they are opened. No SMS is sent.</li>
+      <li>Jal Santulan can open only the files it created or that the user chose for it in Google Drive.</li>
+    </ul>
+    <p class="small"><a href="privacy.html">Privacy policy</a></p>
+  </section>
+
+  <section class="card">
+    <h2>Try the demo</h2>
+    <p class="note">The demo uses example patients, and everything you enter stays only in this browser. Do not enter real patient information.</p>
+    <div class="row">
+      <a class="btn" href="demo/app/">Demo patient app</a>
+      <a class="btn" href="demo/dashboard/">Demo doctor's dashboard</a>
+    </div>
     <ol>
-      <li>Open the patient app, enter a code from the table, then any 10-digit mobile number. The SMS code appears on screen.</li>
-      <li>Open the doctor's dashboard in another tab of the same browser and sign in as a demo staff member. The code appears on screen.</li>
+      <li>Open the demo patient app, enter a code from the table, then any 10-digit mobile number. The SMS code appears on screen.</li>
+      <li>Open the demo dashboard in another tab of the same browser and sign in as a demo staff member. The code appears on screen.</li>
       <li>Log a reading or change a dose in the app, then refresh the dashboard to see it.</li>
     </ol>
     <table>
@@ -98,13 +116,12 @@ footer { text-align: center; color: var(--muted); font-size: 14px; }
     <p class="small muted" id="resetMsg" role="status"></p>
   </section>
 
-  <footer>Developed by Aravind Kumar Eligeti and Dr. NVS Krishna Reddy · Decision support only; thresholds are configurable defaults · Not a certified medical device</footer>
+  <footer>Developed by Aravind Kumar Eligeti and Dr. NVS Krishna Reddy · Decision support only; thresholds are configurable defaults · Not a certified medical device · <a href="privacy.html">Privacy</a></footer>
 </main>
 <script>
 document.getElementById('reset').addEventListener('click', function () {
   try {
     ['jal_demo_db_v1', 'jal_state_v1', 'jal_token', 'jal_pin', 'jal_bio'].forEach(function (k) { localStorage.removeItem(k); });
-    sessionStorage.removeItem('jal_token');
     document.getElementById('resetMsg').textContent = 'Demo data cleared. The example patients will be recreated when you next open the app or dashboard.';
   } catch (e) {
     document.getElementById('resetMsg').textContent = 'This browser blocks site storage, so there was nothing to clear.';
