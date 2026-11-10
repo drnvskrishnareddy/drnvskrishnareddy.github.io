@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Jal Santulan</title>
+<meta name="description" content="Fluid balance and sodium monitoring for AVP deficiency (diabetes insipidus). Demo of the patient app and doctor's dashboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap">
+<style>
+/* Layout: one centred column; two entry cards side by side on wide screens, stacked on phones. */
+:root {
+  --bg: #F2F5F5; --surface: #FFFFFF; --sunk: #E8EEEF; --fg: #0F2533; --muted: #4A5C69; --line: #D3DCE0;
+  --accent: #0B6B74; --on-accent: #FFFFFF; --accent-soft: #DDEFF0; --amber: #7E4300; --amber-soft: #FFF0D6; --amber-line: #E2B060;
+  --font: 'Atkinson Hyperlegible', 'Noto Sans Devanagari', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0D171B; --surface: #152228; --sunk: #1B2B32; --fg: #E5EEF1; --muted: #A3B5BF; --line: #2B3D45;
+    --accent: #53B8C1; --on-accent: #05272B; --accent-soft: #163A3F; --amber: #F3BC6B; --amber-soft: #35270F; --amber-line: #7A5520;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.5 var(--font); }
+main { max-width: 860px; margin: 0 auto; padding: 28px max(16px, env(safe-area-inset-right)) 48px max(16px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 18px; }
+h1, h2 { margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: 34px; } h2 { font-size: 20px; }
+p { margin: 0; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { width: 48px; height: 48px; border-radius: 14px; background: var(--accent); display: grid; place-items: center; flex: none; }
+.hi { color: var(--muted); font-size: 16px; }
+.lead { font-size: 19px; max-width: 62ch; }
+.note { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber-line); border-radius: 14px; padding: 14px 16px; font-weight: 700; }
+.cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.card { background: var(--surface); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 18px; border-radius: 12px; font: 700 17px var(--font); text-decoration: none; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+td, th { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-size: 14px; font-weight: 700; }
+code { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; background: var(--sunk); padding: 1px 6px; border-radius: 6px; font-variant-numeric: tabular-nums; }
+ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.muted { color: var(--muted); } .small { font-size: 14px; }
+footer { text-align: center; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <span class="logo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M12 2.5s7 7.6 7 12.6a7 7 0 0 1-14 0C5 10.1 12 2.5 12 2.5z" fill="var(--on-accent)"/></svg></span>
+    <div><h1>Jal Santulan</h1><p class="hi">जल संतुलन</p></div>
+  </div>
+  <p class="lead">Daily water balance and sodium monitoring for people with AVP deficiency (diabetes insipidus), after pituitary or hypothalamic surgery and long term. Patients log urine, drinks, weight, sodium and desmopressin doses; the endocrine team sees risk-sorted alerts.</p>
+  <p class="note">Demo version. It uses example patients, and everything you enter stays only in this browser. Do not enter real patient information.</p>
+
+  <div class="cards">
+    <section class="card">
+      <h2>Patient app</h2>
+      <p class="muted small">Best on a phone. Open in Chrome and use “Add to Home screen” to keep it like an app.</p>
+      <a class="btn primary" href="app/">Open the patient app</a>
+    </section>
+    <section class="card">
+      <h2>Doctor's dashboard</h2>
+      <p class="muted small">Best on a computer or tablet.</p>
+      <a class="btn primary" href="dashboard/">Open the doctor's dashboard</a>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>How to try it</h2>
+    <ol>
+      <li>Open the patient app, enter a code from the table, then any 10-digit mobile number. The SMS code appears on screen.</li>
+      <li>Open the doctor's dashboard in another tab of the same browser and sign in as a demo staff member. The code appears on screen.</li>
+      <li>Log a reading or change a dose in the app, then refresh the dashboard to see it.</li>
+    </ol>
+    <table>
+      <thead><tr><th>Patient code</th><th>Example patient</th></tr></thead>
+      <tbody>
+        <tr><td><code>481273</code></td><td>Day 6 after pituitary surgery, sodium falling, water retention on twice-daily tablets</td></tr>
+        <tr><td><code>640518</code></td><td>Long-term AVP deficiency on nasal spray at night, weekly dose-delay day</td></tr>
+        <tr><td><code>275930</code></td><td>No reliable thirst: fixed drinking plan guided by daily weight</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>Staff user ID</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td><code>demo.consultant</code></td><td>Consultant: enrol, prescribe, review</td></tr>
+        <tr><td><code>demo.nurse</code></td><td>Nurse: ward charting and lab results</td></tr>
+        <tr><td><code>demo.admin</code></td><td>Admin: staff accounts and unit phone numbers</td></tr>
+      </tbody>
+    </table>
+    <p class="small">Password for all three: <code>demo-password-1</code></p>
+    <button class="btn" type="button" id="reset">Reset demo data in this browser</button>
+    <p class="small muted" id="resetMsg" role="status"></p>
+  </section>
+
+  <footer>Developed by Aravind Kumar Eligeti and Dr. NVS Krishna Reddy · Decision support only; thresholds are configurable defaults · Not a certified medical device</footer>
+</main>
+<script>
+document.getElementById('reset').addEventListener('click', function () {
+  try {
+    ['jal_demo_db_v1', 'jal_state_v1', 'jal_token', 'jal_pin', 'jal_bio'].forEach(function (k) { localStorage.removeItem(k); });
+    sessionStorage.removeItem('jal_token');
+    document.getElementById('resetMsg').textContent = 'Demo data cleared. The example patients will be recreated when you next open the app or dashboard.';
+  } catch (e) {
+    document.getElementById('resetMsg').textContent = 'This browser blocks site storage, so there was nothing to clear.';
+  }
+});
+</script>
+</body>
+</html>
